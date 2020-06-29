@@ -6,6 +6,9 @@ import netifaces
 logging.basicConfig(level=logging.INFO)
 from datetime import datetime
 
+my_traffic=[]
+senders=set()
+sender_count={}
 
 def log_with_file(type, log):
     log_str = "\t\t" + str(datetime.now().strftime("%d-%b-%Y (%H:%M:%S-%f)")) + " - " + type + " - " + log
@@ -29,14 +32,34 @@ def init():
         iface = input("Select the Interface|>")
         return netifaces.interfaces()[int(iface) - 1]
 
+def detect_attacks():
+    sender_count={}
+
+    for IP in senders:
+        if()
+        sender_count[IP] = sender_count[IP]+1
+
+    for IP in sender_count:
+        print(1)
+
+
+
+
+def funct(x):
+    my_traffic.append(x)
+    print(x.summary())
+    senders.add(x["IP"].src)
+    detect_attacks()
+
 
 def sniff_fun(iface):
-    sniffer = AsyncSniffer(iface=iface)
+    sniffer = AsyncSniffer(iface=iface,prn=funct)
     sniffer.start()
+
     input("Start IDS Agent - Press any key to STOP |> ")
     sniffer.stop()
-    sniffed = sniffer.results
-    print(sniffed)
+    #sniffed = sniffer.results
+    print(my_traffic[0].summary())
 
 
 def main():
