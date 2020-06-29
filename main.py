@@ -36,7 +36,7 @@ def detect_attacks():
     sender_count={}
 
     for IP in senders:
-        if()
+        if():
         sender_count[IP] = sender_count[IP]+1
 
     for IP in sender_count:
