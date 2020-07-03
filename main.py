@@ -168,5 +168,4 @@ def main():
     iface = init()
     sniff_fun(iface)
 
-
 main()
