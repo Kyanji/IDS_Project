@@ -4,11 +4,12 @@ from scapy.all import *
 import logging
 import argparse
 import netifaces
-
-logging.basicConfig(level=logging.NOTSET)
 from datetime import datetime
 import time
 from os import system, name
+
+logging.basicConfig(level=logging.NOTSET)
+
 
 my_traffic = []
 scan_count = {}
