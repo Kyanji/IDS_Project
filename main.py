@@ -4,12 +4,12 @@ import argparse
 import netifaces
 import numpy as np
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.NOTSET)
 from datetime import datetime
 import time
+from os import system, name
 
 my_traffic = []
-senders = set()
 sender_count = {}
 syn_flood_count = {}
 threshold = 100
@@ -20,8 +20,15 @@ threshold_ports = 20
 syn_threshold = 100
 syn_threshold_time = 2
 
-last_attack = [np.inf, np.inf]
-clean_seconds = 4
+
+def clear():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+
+        # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
 
 
 def log_with_file(type, log):
@@ -44,7 +51,7 @@ def init():
         log_with_file("INFO", "Using " + args.iface)
         netifaces.ifaddresses(args.iface)
         my_ip = netifaces.ifaddresses(args.iface)[netifaces.AF_INET][0]['addr']
-        print(my_ip)  # should print "192.168.100.37"
+        print(my_ip)
         return args.iface
     else:
         for i in range(len(netifaces.interfaces())):
@@ -52,7 +59,7 @@ def init():
         iface = input("Select the Interface|>")
         netifaces.ifaddresses(netifaces.interfaces()[int(iface) - 1])
         my_ip = netifaces.ifaddresses(netifaces.interfaces()[int(iface) - 1])[netifaces.AF_INET][0]['addr']
-        print(my_ip)  # should print "192.168.100.37"
+        print(my_ip)
         return netifaces.interfaces()[int(iface) - 1]
 
 
@@ -84,6 +91,8 @@ def count_ports_syn(port_list, threshold):
 
 def detect_attacks():
     # scan detection
+    attacks_to_print=[]
+
     IP_to_delete_scan = []
     for IP in sender_count:
         # print(IP + "\t-\t" + str(sender_count[IP]))
@@ -93,8 +102,7 @@ def detect_attacks():
                                                                                                    threshold_time)) > threshold_ports:
             # if sender_count[IP]["n"] > threshold and time.time() - sender_count[IP]["start-time"] < threshold_time and len(
             #         sender_count[IP]["ports"]) > threshold_ports:
-            log_with_file("ALERT", " " + str(IP) + "scan you!")
-            print(str(IP) + "\tscan you!")
+            attacks_to_print.append(" " + str(IP) + " Scan you!")
     # if IP_to_delete_scan != []:
     #     for IP in IP_to_delete_scan:
     #         del sender_count[IP]
@@ -106,9 +114,10 @@ def detect_attacks():
         if count_connections(syn_flood_count[IP], syn_threshold_time) > syn_threshold and count_ports_syn(
                 syn_flood_count[IP]["ports"],
                 count_connections(sender_count[IP], syn_threshold_time)) > syn_threshold:
-            log_with_file("ALERT", " " + str(IP) + "Syn Flood")
-            print(str(IP) + "\tSyn Flood")
-            last_attack[1] = time.time()
+            attacks_to_print.append(" " + str(IP) + " Syn Flood")
+    clear()
+    for attacks in attacks_to_print:
+        log_with_file("ALERT", attacks)
 
 
 def funct(x):
@@ -149,9 +158,12 @@ def funct(x):
                     syn_flood_count[x["IP"].src]["timestamp"] = [time.time()]
 
     except Exception as e:
-        print(e)
+        #print(e)
+        pass
 
-    detect_attacks()
+    a=time.time()
+    if int((a-int(a))*100) == 0:
+        detect_attacks()
 
 
 def sniff_fun(iface):
@@ -167,5 +179,6 @@ def sniff_fun(iface):
 def main():
     iface = init()
     sniff_fun(iface)
+
 
 main()
