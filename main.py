@@ -128,8 +128,13 @@ def detect_attacks():
             attacks_to_print.append(" " + str(IP) + " Syn Flood")
     if not verbose:
         clear()
-    for attacks in attacks_to_print:  # output
-        log_with_file("ALERT", attacks)
+        for attacks in attacks_to_print:  # output
+            log_with_file("ALERT", attacks)
+    else:
+        for attacks in attacks_to_print:  # output
+            log_with_file("ALERT",
+                          "\n\n------------------------------ " + attacks + " ----------------------------\n\n")
+        time.sleep(1)
 
 
 def single_connection(x):
