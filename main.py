@@ -1,5 +1,7 @@
 #! /usr/bin/python3
 
+# Find the repository here
+# https://github.com/Kyanji/IDS_Project
 from scapy.all import *
 import logging
 import argparse
@@ -9,7 +11,6 @@ import time
 from os import system, name
 
 logging.basicConfig(level=logging.NOTSET)
-
 
 my_traffic = []
 scan_count = {}
@@ -115,9 +116,9 @@ def detect_attacks():
 
     for IP in scan_count:  # scan detection
         if count_connections(scan_count[IP], threshold_time) > scan_threshold and count_ports(scan_count[IP]["ports"],
-                                                                                 count_connections(
-                                                                                     scan_count[IP],
-                                                                                     threshold_time)) > threshold_ports:
+                                                                                              count_connections(
+                                                                                                  scan_count[IP],
+                                                                                                  threshold_time)) > threshold_ports:
             attacks_to_print.append(" " + str(IP) + " Scan you!")
 
     for IP in syn_flood_count:  # syn flood detection
